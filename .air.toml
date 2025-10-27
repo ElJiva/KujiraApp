@@ -1,0 +1,17 @@
+root = "."
+
+[build]
+  cmd = "go build -o ./tmp/main ."
+  bin = "tmp/main"
+  # reinicia el binario cuando cambien estos archivos
+  include_ext = ["go", "tpl", "tmpl", "html"]
+  exclude_dir = ["tmp", "vendor", ".git"]
+
+[color]
+  main = "yellow"
+  watcher = "cyan"
+  build = "green"
+  runner = "magenta"
+
+[log]
+  time = true
