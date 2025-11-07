@@ -32,10 +32,13 @@ func main() {
 	app.Use(logger.New())
 
 	userRepo := repository.NewUserRepository(database.DB)
+	comicRepo := repository.NewComicRepository(database.DB)
 
 	userHandler := handlers.NewUserHandler(userRepo)
+	comicHandler := handlers.NewComicHandler(comicRepo)
 
 	userHandler.SetupUserRoutes(app)
+	comicHandler.SetupComicRoutes(app)
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Comics API built with Go and MongoDB"})

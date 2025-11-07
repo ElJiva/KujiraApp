@@ -51,13 +51,13 @@ func (r *UserRepository) CheckLogin(email, password string) (*models.User, error
 	err := r.collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, errors.New("user not found")
+			return nil, errors.New("User not found")
 		}
 		return nil, err
 	}
 
 	if user.Password != password {
-		return nil, errors.New("incorrect password")
+		return nil, errors.New("Incorrect password")
 	}
 
 	return &user, nil
