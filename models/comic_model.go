@@ -13,7 +13,7 @@ type Comment struct {
 }
 
 type Comic struct {
-	ID        primitive.ObjectID
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Title     string
 	Imagen    string
 	Category  string
@@ -23,5 +23,5 @@ type Comic struct {
 	VideoLink string
 	BuyLink   string
 
-	Comments []Comment
+	Comments []Comment `bson:"comments" json:"comments"`
 }
