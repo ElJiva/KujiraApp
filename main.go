@@ -55,5 +55,5 @@ func main() {
 	}
 
 	log.Printf("🚀 Servidor corriendo en http://localhost:%s", port)
-	log.Fatal(app.Listen(":" + port))
+	log.Fatal(app.Listen("0.0.0.0:" + port))
 }
