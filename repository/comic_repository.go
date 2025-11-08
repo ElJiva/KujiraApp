@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ComicRepository struct {
@@ -67,10 +68,72 @@ func (r *ComicRepository) GetComicById(id string) (*models.Comic, error) {
 
 	var comic models.Comic
 	if err := r.collection.FindOne(ctx, bson.M{"_id": objId}).Decode(&comic); err != nil {
-		return nil, errors.New("comic not found")
+		return nil, errors.New("Comic not found")
 	}
 
 	return &comic, nil
+}
+
+func (r *ComicRepository) UpdateComic(id string, comic *models.Comic) (*models.Comic, error) {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, errors.New("Invalid comic ID")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+	defer cancel()
+
+	filter := bson.M{"_id": objID}
+
+	update := bson.M{
+		"$set": bson.M{
+			"Title":     comic.Title,
+			"Imagen":    comic.Imagen,
+			"Category":  comic.Category,
+			"Editorial": comic.Editorial,
+			"Rating":    comic.Rating,
+			"VideoLink": comic.VideoLink,
+			"BuyLink":   comic.BuyLink,
+		},
+	}
+
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	var updatedComic models.Comic
+
+	err = r.collection.FindOneAndUpdate(ctx, filter, update, opts).Decode(&updatedComic)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("Comic not found")
+		}
+		return nil, errors.New("Failed to update comic")
+	}
+
+	return &updatedComic, nil
+}
+
+func (r *ComicRepository) DeleteComic(id string) error {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return errors.New("Invalid comic ID")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+	defer cancel()
+
+	filter := bson.M{"_id": objID}
+
+	result, err := r.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return errors.New("Failed to delete comic")
+	}
+
+	if result.DeletedCount == 0 {
+		return errors.New("Comic not found")
+	}
+
+	return nil
 }
 
 func (r *ComicRepository) AddCommentToComic(comicId string, comment models.Comment) error {
@@ -83,7 +146,7 @@ func (r *ComicRepository) AddCommentToComic(comicId string, comment models.Comme
 	defer cancel()
 
 	update := bson.M{
-		"$push": bson.M{"commentary": comment},
+		"$push": bson.M{"comments": comment},
 	}
 
 	result, err := r.collection.UpdateOne(ctx, bson.M{"_id": objId}, update)
