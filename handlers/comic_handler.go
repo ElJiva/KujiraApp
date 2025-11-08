@@ -58,17 +58,11 @@ func (h *ComicHandler) GetComicByID(c *fiber.Ctx) error {
 
 func (h *ComicHandler) UpdateComic(c *fiber.Ctx) error {
 	id := c.Params("id")
-
 	comic := new(models.Comic)
+
 	if err := c.BodyParser(comic); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to parse comic",
-		})
-	}
-
-	if comic.Title == "" || comic.Category == "" || comic.Editorial == "" || comic.Author == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Title, category, editorial and author are required",
+			"error": "Invalid request body",
 		})
 	}
 

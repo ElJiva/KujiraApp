@@ -84,25 +84,42 @@ func (r *ComicRepository) UpdateComic(id string, comic *models.Comic) (*models.C
 	defer cancel()
 
 	filter := bson.M{"_id": objID}
+	updateFields := bson.M{}
 
-	update := bson.M{
-		"$set": bson.M{
-			"Title":     comic.Title,
-			"Imagen":    comic.Imagen,
-			"Category":  comic.Category,
-			"Editorial": comic.Editorial,
-			"Rating":    comic.Rating,
-			"VideoLink": comic.VideoLink,
-			"BuyLink":   comic.BuyLink,
-		},
+	if comic.Title != "" {
+		updateFields["Title"] = comic.Title
+	}
+	if comic.Imagen != "" {
+		updateFields["Imagen"] = comic.Imagen
+	}
+	if comic.Category != "" {
+		updateFields["Category"] = comic.Category
+	}
+	if comic.Editorial != "" {
+		updateFields["Editorial"] = comic.Editorial
+	}
+	if comic.Rating != 0 {
+		updateFields["Rating"] = comic.Rating
+	}
+	if comic.Author != "" {
+		updateFields["Author"] = comic.Author
+	}
+	if comic.VideoLink != "" {
+		updateFields["VideoLink"] = comic.VideoLink
+	}
+	if comic.BuyLink != "" {
+		updateFields["BuyLink"] = comic.BuyLink
 	}
 
+	if len(updateFields) == 0 {
+		return nil, errors.New("No fields to update")
+	}
+
+	update := bson.M{"$set": updateFields}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
 	var updatedComic models.Comic
-
 	err = r.collection.FindOneAndUpdate(ctx, filter, update, opts).Decode(&updatedComic)
-
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, errors.New("Comic not found")
