@@ -73,7 +73,6 @@ func (h *UserHandler) LoginUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) SetupUserRoutes(app *fiber.App) {
-	api := app.Group("/api/v1")
-	api.Post("/register", h.RegisterUser)
-	api.Post("/login", h.LoginUser)
+	app.Post("/register", h.RegisterUser)
+	app.Post("/login", h.LoginUser)
 }
