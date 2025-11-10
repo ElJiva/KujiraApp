@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -30,6 +31,12 @@ func main() {
 
 	app := fiber.New()
 	app.Use(logger.New())
+
+	app.Use(cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "GET, POST, PUT, DELETE, OPTIONS",
+		AllowHeaders: "Origin, Content-type, Accept, Authorization",
+	})
 
 	userRepo := repository.NewUserRepository(database.DB)
 	comicRepo := repository.NewComicRepository(database.DB)
