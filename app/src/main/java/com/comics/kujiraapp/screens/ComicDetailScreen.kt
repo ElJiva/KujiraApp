@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.comics.kujiraapp.components.ComicsHeader
 import com.comics.kujiraapp.models.Comics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -37,6 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import com.comics.kujiraapp.services.ComicApi
 import com.comics.kujiraapp.ui.theme.KujiraAppTheme
 import com.comics.kujiraapp.ui.theme.PrimaryAccent
+import com.comics.kujiraapp.ui.theme.PrimaryBackground
 import com.comics.kujiraapp.ui.theme.SecondaryText
 
 @Composable
@@ -64,7 +67,7 @@ fun ComicDetailScreen(comicId: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(PrimaryAccent),
+            .background(PrimaryBackground),
         contentAlignment = Alignment.Center
     ) {
         if (Comics != null) {
@@ -78,6 +81,7 @@ fun ComicDetailScreen(comicId: String) {
                 item {
                     // Aquí puedes agregar un componente para mostrar los detalles del cómic
                     // Por ejemplo, una imagen de portada, título, descripción, etc.
+                    ComicsHeader(comics = Comics)
                 }
 
                 item {
@@ -141,18 +145,49 @@ fun ComicDetailScreen(comicId: String) {
                 }
 
                 itemsIndexed(tracks) { index, trackName ->
-//                    SongItem(
-//                        trackNumber = trackName,
-//                        title = Album.title,
-//                        artist = Album.artist,
-//                        imageUrl = Album.image
-//                    )
+                    ComicComments(
+                        trackNumber = trackName,
+                        title = Comics.title,
+                        autor = Comics.author,
+                        imageUrl = Comics.imagen
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         } else {
-            // Mostrar un indicador de carga o un mensaje de error si es necesario
+            CircularProgressIndicator(
+                color = PrimaryAccent,
+                trackColor = SecondaryText
+            )
         }
+    }
+}
+
+@Composable
+fun ComicComments(
+    trackNumber: String,
+    title: String,
+    autor: String,
+    imageUrl: String
+) {
+    // Aquí puedes implementar el diseño para cada comentario del cómic
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Comment for $title by $autor",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.DarkGray
+        )
     }
 }
 
