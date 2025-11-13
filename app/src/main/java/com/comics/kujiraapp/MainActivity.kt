@@ -31,10 +31,16 @@ class MainActivity : ComponentActivity() {
             KujiraAppTheme {
                 val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    NavHost(navController = navController, startDestination = HomeScreenRoute) {
+                    NavHost(
+                       navController = navController,
+                        startDestination = HomeScreenRoute,
+                        modifier = Modifier.padding(innerPadding)
+                        ) {
                         composable<HomeScreenRoute> {
                             HomeScreen(
-                                navController = navController
+                                onComicClick = { id ->
+                                    navController.navigate(ComicDetailScreenRoute(id))
+                                }
                             )
                         }
                         composable<ComicDetailScreenRoute> { backEntry ->

@@ -16,7 +16,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(onComicClick: (String) -> Unit) {
     val BASE_URL = "http://134.199.232.81:3000/comics"
     var comics by remember { mutableStateOf(listOf<Comics>()) }
     var loading by remember { mutableStateOf(true) }
