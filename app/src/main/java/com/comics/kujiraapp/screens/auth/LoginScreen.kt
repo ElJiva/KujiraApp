@@ -16,11 +16,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-//import com.comics.kujiraapp.ui.theme.KujiraAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onSignUpClicked: () -> Unit = {}) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -104,7 +103,7 @@ fun LoginScreen() {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Don't have an account? ", color = Color.Gray)
-                TextButton(onClick = { /* TODO: Navigate to Sign Up */ }) {
+                TextButton(onClick = onSignUpClicked) {
                     Text("Sign Up", color = Color.Red)
                 }
             }
@@ -115,7 +114,5 @@ fun LoginScreen() {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    // KujiraAppTheme {
-        LoginScreen()
-    // }
+    LoginScreen()
 }

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
@@ -119,7 +119,7 @@ fun SignUpScreen() {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Already have an account? ", color = Color.Gray)
-                TextButton(onClick = { /* TODO: Navigate to Login */ }) {
+                TextButton(onClick = onLoginClicked) {
                     Text("Log In", color = Color.Red)
                 }
             }
