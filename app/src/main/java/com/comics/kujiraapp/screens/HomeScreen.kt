@@ -173,7 +173,7 @@ private fun HomeHeader(onFilterClick: () -> Unit) {
                 focusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
                 unfocusedContainerColor = Color(0xFF2C2C2C),
-                focusedContainerColor = Color(0xFF2C2C2C),
+                focusedContainerColor = Color.Transparent,
             )
         )
     }
