@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.PrimaryAccent
 import com.comics.kujiraapp.ui.theme.SecondaryText
 import com.comics.kujiraapp.viewmodels.auth.SignUpViewModel
@@ -45,7 +46,7 @@ fun SignUpScreen(
 
   Surface(
     modifier = Modifier.fillMaxSize(),
-    color = Color(0xFF121212)
+    color = (BackgroundCard)
   ) {
     Column(
       modifier = Modifier
@@ -69,7 +70,16 @@ fun SignUpScreen(
         label = { Text("UserName", color = SecondaryText) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        colors = TextFieldDefaults.colors(
+          focusedIndicatorColor = PrimaryAccent,
+          unfocusedIndicatorColor = PrimaryAccent,
+          focusedContainerColor = Color.Transparent,
+          unfocusedContainerColor = Color.Transparent,
+          cursorColor = PrimaryAccent,
+          focusedLabelColor = SecondaryText,
+          unfocusedLabelColor = SecondaryText,
+        )
       )
 
       Spacer(modifier = Modifier.height(16.dp))
@@ -80,7 +90,16 @@ fun SignUpScreen(
         label = { Text("Email", color = SecondaryText) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        colors = TextFieldDefaults.colors(
+          focusedIndicatorColor = PrimaryAccent,
+          unfocusedIndicatorColor = PrimaryAccent,
+          focusedContainerColor = Color.Transparent,
+          unfocusedContainerColor = Color.Transparent,
+          cursorColor = PrimaryAccent,
+          focusedLabelColor = SecondaryText,
+          unfocusedLabelColor = SecondaryText,
+        )
       )
 
       Spacer(modifier = Modifier.height(16.dp))
@@ -92,6 +111,15 @@ fun SignUpScreen(
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        colors = TextFieldDefaults.colors(
+          focusedIndicatorColor = PrimaryAccent,
+          unfocusedIndicatorColor = PrimaryAccent,
+          focusedContainerColor = Color.Transparent,
+          unfocusedContainerColor = Color.Transparent,
+          cursorColor = PrimaryAccent,
+          focusedLabelColor = SecondaryText,
+          unfocusedLabelColor = SecondaryText,
+        ),
         trailingIcon = {
           IconButton(onClick = { passwordVisible = !passwordVisible }) {
             Icon(
@@ -111,6 +139,15 @@ fun SignUpScreen(
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        colors = TextFieldDefaults.colors(
+          focusedIndicatorColor = PrimaryAccent,
+          unfocusedIndicatorColor = PrimaryAccent,
+          focusedContainerColor = Color.Transparent,
+          unfocusedContainerColor = Color.Transparent,
+          cursorColor = PrimaryAccent,
+          focusedLabelColor = SecondaryText,
+          unfocusedLabelColor = SecondaryText,
+        ),
         trailingIcon = {
           IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
             Icon(
@@ -136,7 +173,7 @@ fun SignUpScreen(
         },
         modifier = Modifier.fillMaxWidth(),
         enabled = !state.loading,
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+        colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
       ) {
         if (state.loading) {
           CircularProgressIndicator(color = Color.White, strokeWidth = 2.dp)
