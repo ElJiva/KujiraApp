@@ -16,21 +16,36 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.comics.kujiraapp.ui.theme.PrimaryAccent
 import com.comics.kujiraapp.ui.theme.SecondaryText
+import com.comics.kujiraapp.viewmodels.auth.SignUpViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
+fun SignUpScreen(
+  onLoginClicked: () -> Unit = {}
+) {
+
+  val viewModel: SignUpViewModel = viewModel()
+  val state by viewModel.state.collectAsState()
+
+  var username by rememberSaveable { mutableStateOf("") }
   var email by rememberSaveable { mutableStateOf("") }
   var password by rememberSaveable { mutableStateOf("") }
   var confirmPassword by rememberSaveable { mutableStateOf("") }
   var passwordVisible by rememberSaveable { mutableStateOf(false) }
   var confirmPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
+  LaunchedEffect(state.success) {
+    if (state.success) {
+      onLoginClicked()
+    }
+  }
+
   Surface(
     modifier = Modifier.fillMaxSize(),
-    color = Color(0xFF121212) // Dark background color
+    color = Color(0xFF121212)
   ) {
     Column(
       modifier = Modifier
@@ -39,13 +54,25 @@ fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center
     ) {
-      Spacer(modifier = Modifier.height(60.dp))
+
       Text(
         "Create Your Account",
         style = MaterialTheme.typography.headlineMedium,
         color = SecondaryText
       )
+
       Spacer(modifier = Modifier.height(48.dp))
+
+      OutlinedTextField(
+        value = username,
+        onValueChange = { username = it },
+        label = { Text("UserName", color = SecondaryText) },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+      )
+
+      Spacer(modifier = Modifier.height(16.dp))
 
       OutlinedTextField(
         value = email,
@@ -53,16 +80,7 @@ fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
         label = { Text("Email", color = SecondaryText) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        colors = TextFieldDefaults.colors(
-          focusedIndicatorColor = PrimaryAccent,
-          unfocusedIndicatorColor = PrimaryAccent,
-          focusedContainerColor = Color.Transparent,
-          unfocusedContainerColor = Color.Transparent,
-          cursorColor = PrimaryAccent,
-          focusedLabelColor = SecondaryText,
-          unfocusedLabelColor = SecondaryText,
-        )
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
       )
 
       Spacer(modifier = Modifier.height(16.dp))
@@ -74,25 +92,14 @@ fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         trailingIcon = {
-          val image = if (passwordVisible)
-            Icons.Filled.Visibility
-          else Icons.Filled.VisibilityOff
-          val description = if (passwordVisible) "Hide password" else "Show password"
           IconButton(onClick = { passwordVisible = !passwordVisible }) {
-            Icon(imageVector = image, description)
+            Icon(
+              imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+              contentDescription = null
+            )
           }
-        },
-        colors = TextFieldDefaults.colors(
-          focusedIndicatorColor = PrimaryAccent,
-          unfocusedIndicatorColor = PrimaryAccent,
-          focusedContainerColor = Color.Transparent,
-          unfocusedContainerColor = Color.Transparent,
-          cursorColor = PrimaryAccent,
-          focusedLabelColor = SecondaryText,
-          unfocusedLabelColor = SecondaryText,
-        )
+        }
       )
 
       Spacer(modifier = Modifier.height(16.dp))
@@ -104,40 +111,45 @@ fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         trailingIcon = {
-          val image = if (confirmPasswordVisible)
-            Icons.Filled.Visibility
-          else Icons.Filled.VisibilityOff
-          val description = if (confirmPasswordVisible) "Hide password" else "Show password"
           IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
-            Icon(imageVector = image, description)
+            Icon(
+              imageVector = if (confirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+              contentDescription = null
+            )
           }
-        },
-        colors = TextFieldDefaults.colors(
-          focusedIndicatorColor = PrimaryAccent,
-          unfocusedIndicatorColor = PrimaryAccent,
-          focusedContainerColor = Color.Transparent,
-          unfocusedContainerColor = Color.Transparent,
-          cursorColor = PrimaryAccent,
-          focusedLabelColor = SecondaryText,
-          unfocusedLabelColor = SecondaryText,
-        )
+        }
       )
 
       Spacer(modifier = Modifier.height(24.dp))
 
+      state.error?.let {
+        Text(text = it, color = Color.Red)
+        Spacer(modifier = Modifier.height(12.dp))
+      }
+
       Button(
-        onClick = { /* TODO: Handle registration */ },
+        onClick = {
+          if (password == confirmPassword) {
+            viewModel.signUp(username, email, password, confirmPassword)
+          }
+        },
         modifier = Modifier.fillMaxWidth(),
+        enabled = !state.loading,
         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
       ) {
-        Text("Register", color = Color.White, modifier = Modifier.padding(vertical = 8.dp))
+        if (state.loading) {
+          CircularProgressIndicator(color = Color.White, strokeWidth = 2.dp)
+        } else {
+          Text("Register", color = Color.White)
+        }
       }
 
       Spacer(modifier = Modifier.height(24.dp))
 
-      Row(verticalAlignment = Alignment.CenterVertically) {
+      Row(
+        verticalAlignment = Alignment.CenterVertically
+      ) {
         Text("Already have an account? ", color = Color.Gray)
         TextButton(onClick = onLoginClicked) {
           Text("Log In", color = Color.Red)
@@ -146,6 +158,7 @@ fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
     }
   }
 }
+
 
 @Preview(showBackground = true)
 @Composable

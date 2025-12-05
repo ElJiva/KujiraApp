@@ -25,7 +25,6 @@ class LoginViewModel : ViewModel() {
       _state.value = LoginState(loading = true)
       try {
         val response = RetrofitClient.authApi.login(LoginRequest(email, password))
-        // TODO: Save the token
         _state.value = LoginState(success = true)
       } catch (e: Exception) {
         _state.value = LoginState(error = e.message)

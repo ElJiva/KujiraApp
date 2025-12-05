@@ -20,12 +20,11 @@ class SignUpViewModel : ViewModel() {
     private val _state = MutableStateFlow(SignUpState())
     val state: StateFlow<SignUpState> = _state.asStateFlow()
 
-    fun signUp(email: String, password: String) {
+    fun signUp(username: String, email: String, password: String, confirmPassword: String) {
         viewModelScope.launch {
             _state.value = SignUpState(loading = true)
             try {
-                val response = RetrofitClient.authApi.signUp(SignUpRequest(email, password))
-                // TODO: Save the token
+                val response = RetrofitClient.authApi.signUp(SignUpRequest(username, email, password, confirmPassword))
                 _state.value = SignUpState(success = true)
             } catch (e: Exception) {
                 _state.value = SignUpState(error = e.message)
