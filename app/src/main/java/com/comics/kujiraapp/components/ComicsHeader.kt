@@ -162,6 +162,8 @@ fun ComicsHeader(comics: Comics) {
 fun InfoContainer(
     title: String,
     content: String,
+    rating: Float,
+    reviews: Int,
     onBuyClicked: () -> Unit,
     onWatchTrailerClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -179,8 +181,6 @@ fun InfoContainer(
             color = SecondaryText,
             style = MaterialTheme.typography.bodyLarge,
             fontSize = 30.sp
-
-
         )
         Text(
             text = content,
@@ -189,7 +189,8 @@ fun InfoContainer(
         )
 
         RatingRow(
-            rating = 4.5f,
+            rating = rating,
+            reviews = reviews,
             modifier = Modifier.padding(top = 8.dp)
         )
 
@@ -249,6 +250,7 @@ fun InfoContainer(
 @Composable
 fun RatingRow(
     rating: Float,
+    reviews: Int,
     modifier: Modifier = Modifier
 ) {
     val maxStars = 5
@@ -299,41 +301,13 @@ fun RatingRow(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = "(1,284 reviews)",
+            text = "(${reviews.toString()} reviews)",
             color = Color.DarkGray,
             style = MaterialTheme.typography.bodyMedium
         )
     }
 }
 
-fun Int.formatWithCommas(): String {
-    return String.format("%,d", this)
-}
-
-
-
-
-@Composable
-fun Comments(
-
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BackgroundCard)
-            .padding(16.dp)
-
-    ) {
-
-        Text(
-            text = "Comments Section",
-            color = Color.White,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-    }
-}
 
 
 @Preview
@@ -353,17 +327,17 @@ fun ComicsHeaderPreview() {
 //                buyLink = "https://example.com/buyonepiece",
 //                comments = listOf(
 //                    "Great manga!", "Loved it!"
-//
-//
 //                )
 //            )
-////        )
-//        InfoContainer(
-//            title = "Author",
-//            content = "Eiichiro Oda",
-//            onBuyClicked = {},
-//            onWatchTrailerClicked = {}
-//        )
+//       )
+        InfoContainer(
+            title = "Author",
+            content = "Eiichiro Oda",
+            onBuyClicked = {},
+            onWatchTrailerClicked = {},
+            rating = 4.5f,
+            reviews = 100
+        )
 //        RatingRow(
 //            rating = 4.5f
 //

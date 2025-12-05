@@ -48,11 +48,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.SecondaryText
-import com.comics.kujiraapp.ui.theme.viewmodels.HomeViewModel
+import com.comics.kujiraapp.viewmodels.HomeViewModel
 
 
 @Composable
@@ -66,6 +67,7 @@ fun HomeScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+          .padding(top = 40.dp)
             .background(color = BackgroundCard)
     ) {
         item {
@@ -106,12 +108,6 @@ fun HomeScreen(
             }
 
             else -> {
-                item {
-                    PopularSection()
-                }
-                item {
-                    NewReleasesSection()
-                }
                 items(state.comics.size) { index ->
                     val comic = state.comics[index]
 
@@ -273,7 +269,7 @@ private fun FilterSection() {
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = { /* TODO: Clear filters */ }) {
+            TextButton(onClick = {}) {
                 Text("Clear", color = Color.White, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -289,11 +285,13 @@ private fun FilterSection() {
 }
 
 @Composable
-private fun PopularSection() {
+private fun ComicsSection() {
 
 }
 
+@Preview(showBackground = true)
 @Composable
-private fun NewReleasesSection() {
-
+fun HomeScreenPreview() {
+    HomeScreen(onComicClick = {})
 }
+

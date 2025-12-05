@@ -1,6 +1,5 @@
 package com.comics.kujiraapp.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,11 +17,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,39 +26,24 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.comics.kujiraapp.components.ComicsHeader
-import com.comics.kujiraapp.models.Comics
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import com.comics.kujiraapp.services.ComicApi
+import com.comics.kujiraapp.components.CommentsSection
+import com.comics.kujiraapp.components.InfoContainer
 import com.comics.kujiraapp.ui.theme.KujiraAppTheme
 import com.comics.kujiraapp.ui.theme.PrimaryAccent
 import com.comics.kujiraapp.ui.theme.PrimaryBackground
 import com.comics.kujiraapp.ui.theme.SecondaryText
+import com.comics.kujiraapp.viewmodels.ComicDetailViewModel
+import androidx.compose.ui.platform.LocalUriHandler
 
 @Composable
 fun ComicDetailScreen(comicId: String) {
-    val BASE_URL = "http://134.199.232.81:3000/comics"
-    var comics by remember { mutableStateOf<Comics?>(null) }
+    val viewModel: ComicDetailViewModel =
+        viewModel(factory = ComicDetailViewModel.Factory(comicId))
+    val state by viewModel.state.collectAsState()
 
-
-    LaunchedEffect(true) {
-        try {
-            val retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-            val service = retrofit.create(ComicApi::class.java)
-            val result = withContext(Dispatchers.IO) { service.getComicsDetail(comicId) }
-            comics = result
-            Log.i("ProductDetail", comics.toString())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-    val Comics = comics
+    val uriHandler = LocalUriHandler.current
 
     Box(
         modifier = Modifier
@@ -70,134 +51,92 @@ fun ComicDetailScreen(comicId: String) {
             .background(PrimaryBackground),
         contentAlignment = Alignment.Center
     ) {
-        if (Comics != null) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 45.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                item {
-                    // Aquí puedes agregar un componente para mostrar los detalles del cómic
-                    // Por ejemplo, una imagen de portada, título, descripción, etc.
-                    ComicsHeader(comics = Comics)
-                }
+        when {
+            state.loading -> {
+                CircularProgressIndicator(
+                    color = PrimaryAccent,
+                    trackColor = SecondaryText
+                )
+            }
 
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .shadow(4.dp, RoundedCornerShape(16.dp))
-                            .background(Color.White)
-                            .clip(RoundedCornerShape(16.dp))
-                            .padding(12.dp)
-                    ) {
-                        Text(
-                            "About this album",
-                            color = SecondaryText,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            Comics.category,
-                            color = Color.DarkGray,
-                            style = MaterialTheme.typography.bodyMedium
+            state.error != null -> {
+                Text(text = state.error!!, color = Color.Red)
+            }
+
+            state.comic != null -> {
+                val comic = state.comic!!
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 45.dp),
+                    contentPadding = PaddingValues(bottom = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    item {
+                        ComicsHeader(comics = comic)
+                    }
+
+                    item {
+                        InfoContainer(
+                            title = comic.title,
+                            content = comic.editorial,
+                            rating = comic.rating.toFloatOrNull() ?: 0f,
+                            reviews = comic.comments.size,
+                            onBuyClicked = {
+                                uriHandler.openUri(comic.buyLink)
+                            },
+                            onWatchTrailerClicked = {
+                                uriHandler.openUri(comic.videoLink)
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
-                }
 
-
-                item {
-                    Box(modifier = Modifier.fillMaxWidth()) {
+                    item {
                         Column(
                             modifier = Modifier
-                                .padding(8.dp)
-                                .align(Alignment.CenterStart)
-                                .width(240.dp)
-                                .shadow(4.dp, RoundedCornerShape(16.dp))
-                                .background(Color.White)
-                                .clip(RoundedCornerShape(16.dp))
-                                .padding(12.dp),
-                            horizontalAlignment = Alignment.Start
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .background(Color.Transparent)
                         ) {
                             Text(
-                                "Author",
+                                "About this album",
                                 color = SecondaryText,
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Text(
-                                Comics. author,
+                                comic.category,
                                 color = Color.DarkGray,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
-                }
 
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
 
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                val tracks = (1..24 step 1).map { trackNumber ->
-                    "Track.$trackNumber"
-                }
-
-                itemsIndexed(tracks) { index, trackName ->
-                    ComicComments(
-                        trackNumber = trackName,
-                        title = Comics.title,
-                        autor = Comics.author,
-                        imageUrl = Comics.imagen
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    item {
+                        CommentsSection(
+                            comments = comic.comments,
+                            onSendComment = { newComment ->
+                                viewModel.addComment(newComment)
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
                 }
             }
-        } else {
-            CircularProgressIndicator(
-                color = PrimaryAccent,
-                trackColor = SecondaryText
-            )
         }
     }
 }
-
-@Composable
-fun ComicComments(
-    trackNumber: String,
-    title: String,
-    autor: String,
-    imageUrl: String
-) {
-    // Aquí puedes implementar el diseño para cada comentario del cómic
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Comment for $title by $autor",
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.DarkGray
-        )
-    }
-}
-
 
 @Preview
 @Composable
 fun ComicDetailScreenPreview() {
     KujiraAppTheme {
-        ComicDetailScreen(
-            comicId = "1"
-        )
+
     }
 }
