@@ -156,7 +156,7 @@ fun CommentItem(
         ){
             Icon(
                 imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Account",
+                contentDescription = "Account.",
                 tint = PrimaryBackground,
                 modifier = Modifier
                     .size(24.dp)
