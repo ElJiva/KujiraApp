@@ -62,7 +62,7 @@ fun LoginScreen(onSignUpClicked: () -> Unit = {}, onLoginSuccess: () -> Unit = {
         Spacer(modifier = Modifier.height(48.dp))
 
         if (state.error != null) {
-          Text(text = state.error!!, color = Color.Red)
+          Text(text = "Correo y/o contraseña incorrectos", color = Color.Red)
           Spacer(modifier = Modifier.height(16.dp))
         }
 
