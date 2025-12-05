@@ -11,7 +11,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -25,7 +24,6 @@ import com.comics.kujiraapp.viewmodels.auth.LoginViewModel
 fun LoginScreen(onSignUpClicked: () -> Unit = {}, onLoginSuccess: () -> Unit = {}) {
     val viewModel: LoginViewModel = viewModel()
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
 
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -70,9 +68,14 @@ fun LoginScreen(onSignUpClicked: () -> Unit = {}, onLoginSuccess: () -> Unit = {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.Red,
-                        unfocusedBorderColor = Color.Gray,
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Red,
+                        unfocusedIndicatorColor = Color.Gray,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        cursorColor = Color.Red,
+                        focusedLabelColor = Color.Red,
+                        unfocusedLabelColor = Color.Gray
                     )
                 )
 
@@ -95,9 +98,14 @@ fun LoginScreen(onSignUpClicked: () -> Unit = {}, onLoginSuccess: () -> Unit = {
                             Icon(imageVector  = image, description)
                         }
                     },
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.Red,
-                        unfocusedBorderColor = Color.Gray
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Red,
+                        unfocusedIndicatorColor = Color.Gray,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        cursorColor = Color.Red,
+                        focusedLabelColor = Color.Red,
+                        unfocusedLabelColor = Color.Gray
                     )
                 )
 
@@ -124,7 +132,7 @@ fun LoginScreen(onSignUpClicked: () -> Unit = {}, onLoginSuccess: () -> Unit = {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Don't have an account? ", color = Color.Gray)
+                    Text("Don\'t have an account? ", color = Color.Gray)
                     TextButton(onClick = onSignUpClicked) {
                         Text("Sign Up", color = Color.Red)
                     }

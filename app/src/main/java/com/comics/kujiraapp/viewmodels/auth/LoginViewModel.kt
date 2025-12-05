@@ -3,7 +3,7 @@ package com.comics.kujiraapp.viewmodels.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.comics.kujiraapp.models.auth.LoginRequest
-import com.comics.kujiraapp.network.ApiService
+import com.comics.kujiraapp.network.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +24,7 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             _state.value = LoginState(loading = true)
             try {
-                val response = ApiService.authApi.login(LoginRequest(email, password))
+                val response = RetrofitClient.authApi.login(LoginRequest(email, password))
                 // TODO: Save the token
                 _state.value = LoginState(success = true)
             } catch (e: Exception) {

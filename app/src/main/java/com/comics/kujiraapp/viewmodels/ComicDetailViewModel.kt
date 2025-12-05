@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.comics.kujiraapp.models.Comics
-import com.comics.kujiraapp.network.ApiService
+import com.comics.kujiraapp.network.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +28,7 @@ class ComicDetailViewModel(private val comicId: String) : ViewModel() {
     private fun fetchComicDetail() {
         viewModelScope.launch {
             try {
-                val result = ApiService.comicApi.getComicsDetail(comicId)
+                val result = RetrofitClient.comicApi.getComicsDetail(comicId)
                 _state.value = ComicDetailState(comic = result, loading = false)
             } catch (e: Exception) {
                 _state.value = ComicDetailState(loading = false, error = e.message)

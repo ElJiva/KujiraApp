@@ -49,9 +49,14 @@ fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Red,
-                    unfocusedBorderColor = Color.Gray,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Red,
+                    unfocusedIndicatorColor = Color.Gray,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.Transparent,
+                    cursorColor = Color.Red,
+                    focusedLabelColor = Color.Red,
+                    unfocusedLabelColor = Color.Gray
                 )
             )
 
@@ -74,9 +79,14 @@ fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
                         Icon(imageVector  = image, description)
                     }
                 },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Red,
-                    unfocusedBorderColor = Color.Gray
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Red,
+                    unfocusedIndicatorColor = Color.Gray,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    cursorColor = Color.Red,
+                    focusedLabelColor = Color.Red,
+                    unfocusedLabelColor = Color.Gray
                 )
             )
             
@@ -99,9 +109,14 @@ fun SignUpScreen(onLoginClicked: () -> Unit = {}) {
                         Icon(imageVector  = image, description)
                     }
                 },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Red,
-                    unfocusedBorderColor = Color.Gray
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Red,
+                    unfocusedIndicatorColor = Color.Gray,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    cursorColor = Color.Red,
+                    focusedLabelColor = Color.Red,
+                    unfocusedLabelColor = Color.Gray
                 )
             )
 

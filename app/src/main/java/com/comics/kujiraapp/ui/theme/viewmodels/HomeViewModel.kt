@@ -3,7 +3,7 @@ package com.comics.kujiraapp.ui.theme.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.comics.kujiraapp.models.Comics
-import com.comics.kujiraapp.network.ApiService
+import com.comics.kujiraapp.network.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,7 +27,7 @@ class HomeViewModel : ViewModel() {
     private fun fetchComics() {
         viewModelScope.launch {
             try {
-                val result = ApiService.comicApi.getComics()
+                val result = RetrofitClient.comicApi.getComics()
                 _state.value = HomeState(comics = result.comics ?: emptyList(), loading = false)
             } catch (e: Exception) {
                 _state.value = HomeState(loading = false, error = e.message)

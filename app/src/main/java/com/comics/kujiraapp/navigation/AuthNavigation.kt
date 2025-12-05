@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.comics.kujiraapp.screens.HomeScreen
 import com.comics.kujiraapp.screens.auth.LoginScreen
 import com.comics.kujiraapp.screens.auth.SignUpScreen
 
