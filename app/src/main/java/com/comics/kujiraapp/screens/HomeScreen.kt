@@ -53,7 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.SecondaryText
-import com.comics.kujiraapp.ui.theme.viewmodels.HomeViewModel
+import com.comics.kujiraapp.viewmodels.HomeViewModel
 
 
 @Composable

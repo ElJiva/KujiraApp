@@ -1,4 +1,4 @@
-package com.comics.kujiraapp.ui.theme.viewmodels
+package com.comics.kujiraapp.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
