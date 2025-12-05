@@ -10,26 +10,26 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class LoginState(
-    val loading: Boolean = false,
-    val success: Boolean = false,
-    val error: String? = null
+  val loading: Boolean = false,
+  val success: Boolean = false,
+  val error: String? = null
 )
 
 class LoginViewModel : ViewModel() {
 
-    private val _state = MutableStateFlow(LoginState())
-    val state: StateFlow<LoginState> = _state.asStateFlow()
+  private val _state = MutableStateFlow(LoginState())
+  val state: StateFlow<LoginState> = _state.asStateFlow()
 
-    fun login(email: String, password: String) {
-        viewModelScope.launch {
-            _state.value = LoginState(loading = true)
-            try {
-                val response = RetrofitClient.authApi.login(LoginRequest(email, password))
-                // TODO: Save the token
-                _state.value = LoginState(success = true)
-            } catch (e: Exception) {
-                _state.value = LoginState(error = e.message)
-            }
-        }
+  fun login(email: String, password: String) {
+    viewModelScope.launch {
+      _state.value = LoginState(loading = true)
+      try {
+        val response = RetrofitClient.authApi.login(LoginRequest(email, password))
+        // TODO: Save the token
+        _state.value = LoginState(success = true)
+      } catch (e: Exception) {
+        _state.value = LoginState(error = e.message)
+      }
     }
+  }
 }

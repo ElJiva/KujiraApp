@@ -10,17 +10,34 @@ import com.comics.kujiraapp.screens.auth.SignUpScreen
 
 @Composable
 fun AuthNavigation() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "login") {
-        composable("login") {
-            LoginScreen(
-                onSignUpClicked = { navController.navigate("signup") }
-            )
+  val navController = rememberNavController()
+
+  NavHost(navController = navController, startDestination = "login") {
+
+    composable("login") {
+      LoginScreen(
+        onSignUpClicked = { navController.navigate("signup") },
+        onLoginSuccess = {
+          navController.navigate("home") {
+            popUpTo("login") { inclusive = true }
+          }
         }
-        composable("signup") {
-            SignUpScreen(
-                onLoginClicked = { navController.navigate("login") }
-            )
-        }
+      )
     }
+
+    composable("signup") {
+      SignUpScreen(
+        onLoginClicked = { navController.navigate("login") }
+      )
+    }
+
+    composable("home") {
+      HomeScreen(
+        onComicClick = { comicId ->
+          // TODO: navController.navigate("comicDetail/$comicId")
+        }
+      )
+    }
+  }
 }
+

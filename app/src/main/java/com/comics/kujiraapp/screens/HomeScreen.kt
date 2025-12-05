@@ -67,6 +67,7 @@ fun HomeScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+          .padding(top = 40.dp)
             .background(color = BackgroundCard)
     ) {
         item {

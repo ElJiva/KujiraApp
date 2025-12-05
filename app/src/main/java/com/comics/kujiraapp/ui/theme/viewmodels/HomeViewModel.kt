@@ -10,28 +10,28 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class HomeState(
-    val comics: List<Comics> = emptyList(),
-    val loading: Boolean = true,
-    val error: String? = null
+  val comics: List<Comics> = emptyList(),
+  val loading: Boolean = true,
+  val error: String? = null
 )
 
 class HomeViewModel : ViewModel() {
 
-    private val _state = MutableStateFlow(HomeState())
-    val state: StateFlow<HomeState> = _state.asStateFlow()
+  private val _state = MutableStateFlow(HomeState())
+  val state: StateFlow<HomeState> = _state.asStateFlow()
 
-    init {
-        fetchComics()
-    }
+  init {
+    fetchComics()
+  }
 
-    private fun fetchComics() {
-        viewModelScope.launch {
-            try {
-                val result = RetrofitClient.comicApi.getComics()
-                _state.value = HomeState(comics = result.comics ?: emptyList(), loading = false)
-            } catch (e: Exception) {
-                _state.value = HomeState(loading = false, error = e.message)
-            }
-        }
+  private fun fetchComics() {
+    viewModelScope.launch {
+      try {
+        val result = RetrofitClient.comicApi.getComics()
+        _state.value = HomeState(comics = result.comics ?: emptyList(), loading = false)
+      } catch (e: Exception) {
+        _state.value = HomeState(loading = false, error = e.message)
+      }
     }
+  }
 }
