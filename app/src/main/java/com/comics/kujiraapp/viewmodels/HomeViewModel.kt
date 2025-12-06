@@ -15,7 +15,11 @@ data class HomeState(
   val allComics: List<Comics> = emptyList(),
   val loading: Boolean = true,
   val searchQuery: String = "",
+  val selectedGenre:String ="All Genres",
+  val marvelChecked: Boolean=true,
+  val dcChecked: Boolean=true,
   val error: String? = null
+
 )
 
 class HomeViewModel : ViewModel() {
@@ -38,8 +42,7 @@ class HomeViewModel : ViewModel() {
                     comics = result,
                     allComics = result,
                     loading = false,
-                    error = null,
-                    searchQuery = ""
+                    error = null
                 )
             } catch (e: Exception) {
                 println("DEBUG: Error: ${e.message}")
@@ -49,26 +52,74 @@ class HomeViewModel : ViewModel() {
                     allComics = emptyList(),
                     loading = false,
                     error = e.message,
-                    searchQuery = ""
                 )
             }
         }
     }
     fun onSearchQueryChange(query: String){
         _state.update{current ->
-            val filtered = if(query.isBlank()){
-                current.allComics
-            }
-            else {
-                current.allComics.filter{comic ->
-                    comic.title.contains(query,ignoreCase = true)||
-                            comic.author.contains(query,ignoreCase = true)
-                }
-            }
-            current.copy(
-                searchQuery = query,
-                comics = filtered
+            current.copy(searchQuery = query)
+        }
+        applyFilters()
+    }
+    fun onGenreChange(genre: String){
+        _state.update{
+            it.copy(selectedGenre = genre)
+        }
+        applyFilters()
+    }
+    fun onMarvelCheckChange(checked: Boolean){
+        _state.update { it.copy(marvelChecked = checked) }
+        applyFilters()
+
+    }
+    fun onDcCheckChange(checked: Boolean){
+        _state.update { it.copy(dcChecked = checked) }
+        applyFilters()
+
+    }
+    fun clearFilters(){
+        _state.update {
+            it.copy(
+                searchQuery = "",
+                selectedGenre = "All Genres",
+                marvelChecked = true,
+                dcChecked = true
             )
         }
+        applyFilters()
+    }
+    private fun applyFilters(){
+        _state.update { current ->
+            var filtered = current.allComics
+
+            if (current.searchQuery.isNotBlank()) {
+                filtered = filtered.filter { comic ->
+                    comic.title.contains(current.searchQuery, ignoreCase = true) ||
+                            comic.author.contains(current.searchQuery, ignoreCase = true)
+                }
+            }
+
+            val selectedPublishers = mutableListOf<String>()
+            if (current.marvelChecked)selectedPublishers.add("Marvel")
+            if (current.dcChecked)selectedPublishers.add("DC")
+
+            if (selectedPublishers.isNotEmpty()){
+                filtered = filtered.filter { comic ->
+                    selectedPublishers.any { publisher ->
+                        comic.editorial.contains(publisher, ignoreCase = true)
+                    }
+                }
+            }
+            if (current.selectedGenre != "All Genres") {
+                filtered = filtered.filter { comic ->
+                    comic.category.equals(current.selectedGenre, ignoreCase = true)
+                }
+            }
+            current.copy(comics = filtered)
+        }
+
+
     }
 }
+

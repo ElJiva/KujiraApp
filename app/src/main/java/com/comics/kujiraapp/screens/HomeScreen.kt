@@ -55,15 +55,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
 import com.comics.kujiraapp.models.Comics
 import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.SecondaryText
 import com.comics.kujiraapp.viewmodels.HomeViewModel
 import kotlin.collections.forEach
 import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.sp
+import com.comics.kujiraapp.ui.theme.PrimaryAccent
 import com.comics.kujiraapp.utils.getDrawableResourceId
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -95,7 +98,16 @@ fun HomeScreen(
                 enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
                 exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
             ) {
-                FilterSection()
+                FilterSection(
+                    selectedGenre = state.selectedGenre,
+                    onGenreChange = {homeViewModel.onGenreChange(it)},
+                    marvelChecked = state.marvelChecked,
+                    onMarvelCheckChange = { homeViewModel.onMarvelCheckChange(it) },
+                    dcChecked = state.dcChecked,
+                    onDcCheckChange = { homeViewModel.onDcCheckChange(it) },
+                    onClearFilters = { homeViewModel.clearFilters() },
+                    onApplyFilters = { showFilters = false}
+                )
             }
         }
 
@@ -209,14 +221,13 @@ private fun HomeHeader(
             },
             shape = RoundedCornerShape(15.dp),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                cursorColor = Color.White,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedContainerColor = Color(0xFF2C2C2C),
-                focusedContainerColor = Color.White,
+                focusedIndicatorColor = PrimaryAccent,
+                unfocusedIndicatorColor = PrimaryAccent,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                cursorColor = PrimaryAccent,
+                focusedLabelColor = SecondaryText,
+                unfocusedLabelColor = SecondaryText,
             )
         )
     }
@@ -224,13 +235,18 @@ private fun HomeHeader(
 
 //Filtro para Comics
 @Composable
-private fun FilterSection() {
+private fun FilterSection(
+    selectedGenre: String,
+    onGenreChange: (String) -> Unit,
+    marvelChecked: Boolean,
+    onMarvelCheckChange: (Boolean) -> Unit,
+    dcChecked: Boolean,
+    onDcCheckChange: (Boolean) -> Unit,
+    onClearFilters: () -> Unit,
+    onApplyFilters: () -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedGenre by remember { mutableStateOf("All Genres") }
     val genres = listOf("All Genres",  "Superheroes")
-
-    var marvelChecked by remember { mutableStateOf(true) }
-    var dcChecked by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -246,7 +262,11 @@ private fun FilterSection() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Genre
-        Text("Genre", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+        Text("Genre",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium
+        )
         Spacer(modifier = Modifier.height(8.dp))
 
         Box {
@@ -260,7 +280,10 @@ private fun FilterSection() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = selectedGenre, color = Color.White)
-                Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown", tint = Color.White)
+                Icon(Icons.Default.ArrowDropDown,
+                    contentDescription = "Dropdown",
+                    tint = Color.White
+                )
             }
             DropdownMenu(
                 expanded = expanded,
@@ -271,7 +294,7 @@ private fun FilterSection() {
                     DropdownMenuItem(
                         text = { Text(genre, color = Color.White) },
                         onClick = {
-                            selectedGenre = genre
+                            onGenreChange(genre)
                             expanded = false
                         }
                     )
@@ -282,13 +305,18 @@ private fun FilterSection() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Publisher
-        Text("Publisher", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
+        Text("Publisher",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier
+            .height(8.dp)
+        )
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = marvelChecked,
-                onCheckedChange = { marvelChecked = it },
+                onCheckedChange = onMarvelCheckChange,
                 colors = CheckboxDefaults.colors(
                     checkedColor = Color(0xFFE25B5B),
                     uncheckedColor = Color.Gray,
@@ -299,7 +327,7 @@ private fun FilterSection() {
             Spacer(modifier = Modifier.width(16.dp))
             Checkbox(
                 checked = dcChecked,
-                onCheckedChange = { dcChecked = it },
+                onCheckedChange = onDcCheckChange,
                 colors = CheckboxDefaults.colors(
                     checkedColor = Color(0xFFE25B5B),
                     uncheckedColor = Color.Gray,
@@ -317,12 +345,14 @@ private fun FilterSection() {
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = {}) {
-                Text("Clear", color = Color.White, fontWeight = FontWeight.Bold)
+            TextButton(onClick = onClearFilters) {
+                Text("Clear",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(
-                onClick = { },
+                onClick = onApplyFilters,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE25B5B))
             ) {
@@ -339,55 +369,124 @@ private fun ComicItem(
 ) {
     val context = LocalContext.current
     val imagesResId = getDrawableResourceId(context, comic.imagen)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundCard, RoundedCornerShape(12.dp))
-            .clickable { onComicClick(comic.id) }
-            .padding(8.dp)
-
-    ) {
-        if (imagesResId != 0){
-            Image(
-                painter = painterResource(id = imagesResId),
-                contentDescription = comic.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(3f/4f),
-                contentScale = ContentScale.Crop
+            .background(
+                color = Color(0xFF1E1E1E),
+                shape = RoundedCornerShape(16.dp)
             )
-        }else{
-            //Por si no encuentra la imagen
+            .clickable { onComicClick(comic.id) }
+            .padding(12.dp)
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(3f / 4f)
+                .clip(RoundedCornerShape(12.dp))
+        ) {
+            if (imagesResId != 0) {
+                Image(
+                    painter = painterResource(id = imagesResId),
+                    contentDescription = comic.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Gray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No Image",
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(3f/4f)
-                    .background(Color.Gray),
-                contentAlignment = Alignment.Center
-            ){
-                Text(text = "No Image Found", color = Color.White)
+                    .height(60.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.7f)
+                            )
+                        )
+                    )
+            )
+
+            if (comic.category.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .background(
+                            color = PrimaryAccent,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = comic.category,
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Título
         Text(
             text = comic.title,
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            lineHeight = 18.sp
         )
 
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // Autor
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(3.dp)
+                    .height(12.dp)
+                    .background(PrimaryAccent)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = comic.author,
+                color = Color(0xFFB0B0B0),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // Editorial
         Text(
-            text = "Author: ${comic.author}",
-            color = Color.LightGray,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            text = "Publisher: ${comic.editorial}",
-            color = Color.LightGray,
+            text = comic.editorial,
+            color = Color(0xFF808080),
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
