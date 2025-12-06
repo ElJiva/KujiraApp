@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,15 +49,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
+import com.comics.kujiraapp.models.Comics
 import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.SecondaryText
 import com.comics.kujiraapp.viewmodels.HomeViewModel
+import kotlin.collections.forEach
 
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     onComicClick: (String) -> Unit,
@@ -67,12 +74,13 @@ fun HomeScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-          .padding(top = 40.dp)
             .background(color = BackgroundCard)
+            .padding(top = 40.dp)
     ) {
         item {
             HomeHeader(onFilterClick = { showFilters = !showFilters })
         }
+
         item {
             AnimatedVisibility(
                 visible = showFilters,
@@ -82,11 +90,14 @@ fun HomeScreen(
                 FilterSection()
             }
         }
+
         when {
             state.loading -> {
                 item {
                     Box(
-                        modifier = Modifier.fillParentMaxSize(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(color = SecondaryText)
@@ -98,7 +109,7 @@ fun HomeScreen(
                 item {
                     Box(
                         modifier = Modifier
-                            .fillParentMaxSize()
+                            .fillMaxWidth()
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -108,15 +119,39 @@ fun HomeScreen(
             }
 
             else -> {
-                items(state.comics.size) { index ->
-                    val comic = state.comics[index]
+                val comics = state.comics
+                items(
+                    count = (comics.size + 1) / 2,
+                    key = { index -> "${comics.getOrNull(index * 2)?.id}_${comics.getOrNull(index * 2 + 1)?.id}" }
+                ) { rowIndex ->
+                    val firstIndex = rowIndex * 2
+                    val secondIndex = firstIndex + 1
 
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            ComicItem(comic = comics[firstIndex], onComicClick = onComicClick)
+                        }
+
+                        if (secondIndex < comics.size) {
+                            Box(modifier = Modifier.weight(1f)) {
+                                ComicItem(comic = comics[secondIndex], onComicClick = onComicClick)
+                            }
+                        } else {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
                 }
             }
         }
     }
 }
 
+//Header
 @Composable
 private fun HomeHeader(onFilterClick: () -> Unit) {
     Column(
@@ -145,11 +180,13 @@ private fun HomeHeader(onFilterClick: () -> Unit) {
         }
         Spacer(modifier = Modifier.height(16.dp))
 
+// SearchBar
         var searchBar by remember { mutableStateOf("") }
         TextField(
             value = searchBar,
             onValueChange = { searchBar = it },
             modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
             placeholder = {
                 Text("Search comics or characters...", color = Color.LightGray)
             },
@@ -175,6 +212,7 @@ private fun HomeHeader(onFilterClick: () -> Unit) {
     }
 }
 
+//Filtro para Comics
 @Composable
 private fun FilterSection() {
     var expanded by remember { mutableStateOf(false) }
@@ -274,7 +312,7 @@ private fun FilterSection() {
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(
-                onClick = { /* TODO: Apply filters */ },
+                onClick = { },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE25B5B))
             ) {
@@ -313,7 +351,23 @@ private fun ComicItem(
             overflow = TextOverflow.Ellipsis
         )
 
+        Text(
+            text = "Author: ${comic.author}",
+            color = Color.LightGray,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = "Publisher: ${comic.editorial}",
+            color = Color.LightGray,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 }
+
 
 @Preview(showBackground = true)
 @Composable
