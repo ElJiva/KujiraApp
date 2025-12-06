@@ -55,15 +55,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
 import com.comics.kujiraapp.models.Comics
 import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.SecondaryText
 import com.comics.kujiraapp.viewmodels.HomeViewModel
 import kotlin.collections.forEach
 import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.sp
 import com.comics.kujiraapp.ui.theme.PrimaryAccent
 import com.comics.kujiraapp.utils.getDrawableResourceId
 
@@ -278,7 +280,10 @@ private fun FilterSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = selectedGenre, color = Color.White)
-                Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown", tint = Color.White)
+                Icon(Icons.Default.ArrowDropDown,
+                    contentDescription = "Dropdown",
+                    tint = Color.White
+                )
             }
             DropdownMenu(
                 expanded = expanded,
@@ -364,55 +369,124 @@ private fun ComicItem(
 ) {
     val context = LocalContext.current
     val imagesResId = getDrawableResourceId(context, comic.imagen)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundCard, RoundedCornerShape(12.dp))
-            .clickable { onComicClick(comic.id) }
-            .padding(8.dp)
-
-    ) {
-        if (imagesResId != 0){
-            Image(
-                painter = painterResource(id = imagesResId),
-                contentDescription = comic.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(3f/4f),
-                contentScale = ContentScale.Crop
+            .background(
+                color = Color(0xFF1E1E1E),
+                shape = RoundedCornerShape(16.dp)
             )
-        }else{
-            //Por si no encuentra la imagen
+            .clickable { onComicClick(comic.id) }
+            .padding(12.dp)
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(3f / 4f)
+                .clip(RoundedCornerShape(12.dp))
+        ) {
+            if (imagesResId != 0) {
+                Image(
+                    painter = painterResource(id = imagesResId),
+                    contentDescription = comic.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Gray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No Image",
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(3f/4f)
-                    .background(Color.Gray),
-                contentAlignment = Alignment.Center
-            ){
-                Text(text = "No Image Found", color = Color.White)
+                    .height(60.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.7f)
+                            )
+                        )
+                    )
+            )
+
+            if (comic.category.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .background(
+                            color = PrimaryAccent,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = comic.category,
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Título
         Text(
             text = comic.title,
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            lineHeight = 18.sp
         )
 
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // Autor
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(3.dp)
+                    .height(12.dp)
+                    .background(PrimaryAccent)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = comic.author,
+                color = Color(0xFFB0B0B0),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // Editorial
         Text(
-            text = "Author: ${comic.author}",
-            color = Color.LightGray,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            text = "Publisher: ${comic.editorial}",
-            color = Color.LightGray,
+            text = comic.editorial,
+            color = Color(0xFF808080),
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
