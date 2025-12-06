@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -127,7 +126,7 @@ fun CommentsSection(
         comments.forEach { comment ->
             CommentItem(
                 userName = comment.username,
-                date = comment.createdAt,
+                date = comment.createdAt.substring(0, 10),
                 comment = comment.text
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -203,16 +202,9 @@ fun CommmentsSectionPreview() {
     KujiraAppTheme {
         CommentsSection(
             comments = listOf(
-                Comment(
-                    username = "Jane Doe",
-                    text = "Great manga!",
-                    createdAt = "2 days ago"
-                ),
-                Comment(
-                    username = "John Smith",
-                    text = "Loved it!",
-                    createdAt = "5 days ago"
-                )
+                Comment("Alice", "Great comic!", "2025-11-08T12:34:56Z"),
+                Comment("Bob", "I loved the artwork.", "2025-11-07T10:20:30Z"),
+                Comment("Charlie", "Can\'t wait for the next issue.", "2025-11-06T08:15:45Z")
             )
         )
     }
