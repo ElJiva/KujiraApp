@@ -6,8 +6,8 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ComicApi {
-    @GET("/")
-    suspend fun getComics(): ComicListResponse
+    @GET("comics")
+    suspend fun getComics(): List<Comics>
 
     @GET("/{id}")
     suspend fun getComicsDetail(@Path("id") id: String): Comics
