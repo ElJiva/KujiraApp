@@ -23,15 +23,23 @@ class HomeViewModel : ViewModel() {
   init {
     fetchComics()
   }
-
-  private fun fetchComics() {
-    viewModelScope.launch {
-      try {
-        val result = RetrofitClient.comicApi.getComics()
-        _state.value = HomeState(comics = result.comics ?: emptyList(), loading = false)
-      } catch (e: Exception) {
-        _state.value = HomeState(loading = false, error = e.message)
-      }
+    private fun fetchComics() {
+        viewModelScope.launch {
+            try {
+                val result = RetrofitClient.comicApi.getComics()
+                println("DEBUG: Comics recibidos: ${result.size}")
+                result.firstOrNull()?.let { comic ->
+                    println("DEBUG: Primer comentario: ${comic.comments.firstOrNull()}")
+                }
+                _state.value = HomeState(comics = result, loading = false)
+            } catch (e: Exception) {
+                println("DEBUG: Error: ${e.message}")
+                e.printStackTrace()
+                _state.value = HomeState(loading = false, error = e.message)
+            }
+        }
     }
-  }
+
+
+
 }
