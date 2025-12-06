@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.comics.kujiraapp.models.Comment
 import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.KujiraAppTheme
 import com.comics.kujiraapp.ui.theme.PrimaryAccent
@@ -43,7 +44,7 @@ import com.comics.kujiraapp.ui.theme.SecondaryText
 
 @Composable
 fun CommentsSection(
-    comments: List<String>,
+    comments: List<Comment>,
     onSendComment: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -123,11 +124,11 @@ fun CommentsSection(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        comments.forEachIndexed { index, commentText ->
+        comments.forEach { comment ->
             CommentItem(
-                userName = if (index % 2 == 0) "Jane Doe" else "John Smith",
-                date = if (index % 2 == 0) "2 days ago" else "5 days ago",
-                comment = commentText
+                userName = comment.username,
+                date = comment.createdAt,
+                comment = comment.text
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -202,12 +203,16 @@ fun CommmentsSectionPreview() {
     KujiraAppTheme {
         CommentsSection(
             comments = listOf(
-                "Great manga!",
-                "Loved it!",
-                "I'm a fan!",
-                "I'm a fan!",
-                "I'm a fan!",
-                "I'm a fan!"
+                Comment(
+                    username = "Jane Doe",
+                    text = "Great manga!",
+                    createdAt = "2 days ago"
+                ),
+                Comment(
+                    username = "John Smith",
+                    text = "Loved it!",
+                    createdAt = "5 days ago"
+                )
             )
         )
     }

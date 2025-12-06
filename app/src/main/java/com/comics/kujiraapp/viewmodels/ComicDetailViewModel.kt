@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.comics.kujiraapp.models.Comics
+import com.comics.kujiraapp.models.Comment
 import com.comics.kujiraapp.network.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,8 +41,14 @@ class ComicDetailViewModel(private val comicId: String) : ViewModel() {
         val currentState = _state.value
         val currentComic = currentState.comic ?: return
 
+        val  newComment = Comment(
+            username = "Actual User",
+            text = text,
+            createdAt = java.time.Instant.now().toString()
+        )
+
         val updatedComic = currentComic.copy(
-            comments = currentComic.comments + text
+            comments = currentComic.comments + newComment
         )
 
         _state.value = currentState.copy(comic = updatedComic)

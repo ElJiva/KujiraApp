@@ -82,7 +82,7 @@ fun ComicDetailScreen(comicId: String) {
                         InfoContainer(
                             title = comic.title,
                             content = comic.editorial,
-                            rating = comic.rating.toFloatOrNull() ?: 0f,
+                            rating = comic.rating.toFloat(),
                             reviews = comic.comments.size,
                             onBuyClicked = {
                                 uriHandler.openUri(comic.buyLink)
