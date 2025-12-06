@@ -84,7 +84,7 @@ fun ComicsHeader(comics: Comics) {
         modifier = Modifier
             .fillMaxWidth()
             .background(BackgroundCard)
-            .padding(16.dp)
+            .padding(2.dp)
     ) {
         Row(
             modifier = Modifier

@@ -31,6 +31,7 @@ import com.comics.kujiraapp.ui.theme.PrimaryBackground
 import com.comics.kujiraapp.ui.theme.SecondaryText
 import com.comics.kujiraapp.viewmodels.ComicDetailViewModel
 import androidx.compose.ui.platform.LocalUriHandler
+import com.comics.kujiraapp.ui.theme.BackgroundCard
 
 @Composable
 fun ComicDetailScreen(comicId: String) {
@@ -43,7 +44,7 @@ fun ComicDetailScreen(comicId: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(PrimaryBackground),
+            .background(BackgroundCard),
         contentAlignment = Alignment.Center
     ) {
         when {
