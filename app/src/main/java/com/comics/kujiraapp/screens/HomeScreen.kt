@@ -64,6 +64,7 @@ import kotlin.collections.forEach
 import androidx.compose.foundation.Image
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import com.comics.kujiraapp.ui.theme.PrimaryAccent
 import com.comics.kujiraapp.utils.getDrawableResourceId
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -218,14 +219,13 @@ private fun HomeHeader(
             },
             shape = RoundedCornerShape(15.dp),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                cursorColor = Color.White,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedContainerColor = Color(0xFF2C2C2C),
-                focusedContainerColor = Color.White,
+                focusedIndicatorColor = PrimaryAccent,
+                unfocusedIndicatorColor = PrimaryAccent,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                cursorColor = PrimaryAccent,
+                focusedLabelColor = SecondaryText,
+                unfocusedLabelColor = SecondaryText,
             )
         )
     }
