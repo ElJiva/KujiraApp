@@ -285,7 +285,33 @@ private fun FilterSection() {
 }
 
 @Composable
-private fun ComicsSection() {
+private fun ComicItem(
+    comic: Comics,
+    onComicClick: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(BackgroundCard, RoundedCornerShape(12.dp))
+            .clickable { onComicClick(comic.id) }
+            .padding(8.dp)
+    ) {
+        AsyncImage(
+            model = comic.imagen,
+            contentDescription = comic.title,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(3f / 4f),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = comic.title,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
 
 }
 
