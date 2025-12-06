@@ -82,7 +82,11 @@ fun HomeScreen(
             .padding(top = 40.dp)
     ) {
         item {
-            HomeHeader(onFilterClick = { showFilters = !showFilters })
+            HomeHeader(
+                searchText = state.searchQuery,
+                onSearchTextChange = { query -> homeViewModel.onSearchQueryChange(query) },
+                onFilterClick = { showFilters = !showFilters }
+            )
         }
 
         item {
@@ -157,7 +161,10 @@ fun HomeScreen(
 
 //Header
 @Composable
-private fun HomeHeader(onFilterClick: () -> Unit) {
+private fun HomeHeader(
+    searchText: String,
+    onSearchTextChange: (String) -> Unit,
+    onFilterClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -185,10 +192,9 @@ private fun HomeHeader(onFilterClick: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
 // SearchBar
-        var searchBar by remember { mutableStateOf("") }
         TextField(
-            value = searchBar,
-            onValueChange = { searchBar = it },
+            value = searchText,
+            onValueChange = onSearchTextChange,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             placeholder = {
@@ -210,7 +216,7 @@ private fun HomeHeader(onFilterClick: () -> Unit) {
                 focusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
                 unfocusedContainerColor = Color(0xFF2C2C2C),
-                focusedContainerColor = Color.Transparent,
+                focusedContainerColor = Color.White,
             )
         )
     }
