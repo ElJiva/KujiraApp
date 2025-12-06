@@ -1,5 +1,6 @@
 package com.comics.kujiraapp.models
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,5 +19,12 @@ data class Comics(
     val author: String,
     val videoLink: String,
     val buyLink: String,
-    val comments: List<String>
+    val comments: List<Comment> = emptyList()
+)
+
+@Serializable
+data class Comment(
+    @SerialName("Username") val username: String,
+    @SerialName("Text") val text: String,
+    @SerialName("CreatedAt") val createdAt: String
 )

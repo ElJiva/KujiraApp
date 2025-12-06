@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.comics.kujiraapp.models.Comment
 import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.KujiraAppTheme
 import com.comics.kujiraapp.ui.theme.PrimaryAccent
@@ -43,7 +43,7 @@ import com.comics.kujiraapp.ui.theme.SecondaryText
 
 @Composable
 fun CommentsSection(
-    comments: List<String>,
+    comments: List<Comment>,
     onSendComment: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -123,11 +123,11 @@ fun CommentsSection(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        comments.forEachIndexed { index, commentText ->
+        comments.forEach { comment ->
             CommentItem(
-                userName = if (index % 2 == 0) "Jane Doe" else "John Smith",
-                date = if (index % 2 == 0) "2 days ago" else "5 days ago",
-                comment = commentText
+                userName = comment.username,
+                date = comment.createdAt.substring(0, 10),
+                comment = comment.text
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -202,12 +202,9 @@ fun CommmentsSectionPreview() {
     KujiraAppTheme {
         CommentsSection(
             comments = listOf(
-                "Great manga!",
-                "Loved it!",
-                "I'm a fan!",
-                "I'm a fan!",
-                "I'm a fan!",
-                "I'm a fan!"
+                Comment("Alice", "Great comic!", "2025-11-08T12:34:56Z"),
+                Comment("Bob", "I loved the artwork.", "2025-11-07T10:20:30Z"),
+                Comment("Charlie", "Can\'t wait for the next issue.", "2025-11-06T08:15:45Z")
             )
         )
     }
