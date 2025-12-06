@@ -3,7 +3,7 @@ package com.comics.kujiraapp.services
 import com.comics.kujiraapp.models.ComicListResponse
 import com.comics.kujiraapp.models.Comics
 import com.comics.kujiraapp.models.Comment
-import com.comics.kujiraapp.models.auth.CommentRequest
+//import com.comics.kujiraapp.models.auth.CommentRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -19,6 +19,6 @@ interface ComicApi {
     @POST("/{id}/comments")
     suspend fun postComment(
     @Path("id") id: String,
-    @Body request: CommentRequest
+//    @Body request: CommentRequest
     ): Comment
 }

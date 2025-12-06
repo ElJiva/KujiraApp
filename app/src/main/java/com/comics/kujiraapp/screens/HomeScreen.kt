@@ -61,6 +61,10 @@ import com.comics.kujiraapp.ui.theme.BackgroundCard
 import com.comics.kujiraapp.ui.theme.SecondaryText
 import com.comics.kujiraapp.viewmodels.HomeViewModel
 import kotlin.collections.forEach
+import androidx.compose.foundation.Image
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.comics.kujiraapp.utils.getDrawableResourceId
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -327,21 +331,38 @@ private fun ComicItem(
     comic: Comics,
     onComicClick: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val imagesResId = getDrawableResourceId(context, comic.imagen)
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(BackgroundCard, RoundedCornerShape(12.dp))
             .clickable { onComicClick(comic.id) }
             .padding(8.dp)
+
     ) {
-        AsyncImage(
-            model = comic.imagen,
-            contentDescription = comic.title,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(3f / 4f),
-            contentScale = ContentScale.Crop
-        )
+        if (imagesResId != 0){
+            Image(
+                painter = painterResource(id = imagesResId),
+                contentDescription = comic.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(3f/4f),
+                contentScale = ContentScale.Crop
+            )
+        }else{
+            //Por si no encuentra la imagen
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(3f/4f)
+                    .background(Color.Gray),
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "No Image Found", color = Color.White)
+            }
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = comic.title,
