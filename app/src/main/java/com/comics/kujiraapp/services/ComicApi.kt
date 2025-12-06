@@ -9,6 +9,6 @@ interface ComicApi {
     @GET("comics")
     suspend fun getComics(): List<Comics>
 
-    @GET("/{id}")
+    @GET("comics/{id}")
     suspend fun getComicsDetail(@Path("id") id: String): Comics
 }
