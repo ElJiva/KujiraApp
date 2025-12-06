@@ -69,11 +69,17 @@ import com.comics.kujiraapp.ui.theme.PrimaryAccent
 import com.comics.kujiraapp.ui.theme.PrimaryBackground
 import com.comics.kujiraapp.ui.theme.SecondaryText
 import org.w3c.dom.Comment
+import androidx.compose.foundation.Image
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.comics.kujiraapp.utils.getDrawableResourceId
 
 
 
 @Composable
 fun ComicsHeader(comics: Comics) {
+    val context = LocalContext.current
+    val imageResId = getDrawableResourceId(context, comics.imagen )
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -135,13 +141,27 @@ fun ComicsHeader(comics: Comics) {
         ) {
 
 
-            AsyncImage(
-                model = comics.imagen,
-                contentDescription = comics.title,
-                error = ColorPainter(SecondaryText),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (imageResId != 0) {
+                Image(
+                    painter = painterResource(id = imageResId),
+                    contentDescription = comics.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(450.dp),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                // fallback si no encuentra el recurso
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(450.dp)
+                        .background(Color.Gray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "No Image Found", color = Color.White)
+                }
+            }
 
             Box(
                 modifier = Modifier
