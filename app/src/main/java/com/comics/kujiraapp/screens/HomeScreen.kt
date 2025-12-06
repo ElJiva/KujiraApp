@@ -95,7 +95,16 @@ fun HomeScreen(
                 enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
                 exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
             ) {
-                FilterSection()
+                FilterSection(
+                    selectedGenre = state.selectedGenre,
+                    onGenreChange = {homeViewModel.onGenreChange(it)},
+                    marvelChecked = state.marvelChecked,
+                    onMarvelCheckChange = { homeViewModel.onMarvelCheckChange(it) },
+                    dcChecked = state.dcChecked,
+                    onDcCheckChange = { homeViewModel.onDcCheckChange(it) },
+                    onClearFilters = { homeViewModel.clearFilters() },
+                    onApplyFilters = { showFilters = false}
+                )
             }
         }
 
@@ -224,13 +233,18 @@ private fun HomeHeader(
 
 //Filtro para Comics
 @Composable
-private fun FilterSection() {
+private fun FilterSection(
+    selectedGenre: String,
+    onGenreChange: (String) -> Unit,
+    marvelChecked: Boolean,
+    onMarvelCheckChange: (Boolean) -> Unit,
+    dcChecked: Boolean,
+    onDcCheckChange: (Boolean) -> Unit,
+    onClearFilters: () -> Unit,
+    onApplyFilters: () -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedGenre by remember { mutableStateOf("All Genres") }
     val genres = listOf("All Genres",  "Superheroes")
-
-    var marvelChecked by remember { mutableStateOf(true) }
-    var dcChecked by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -246,7 +260,11 @@ private fun FilterSection() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Genre
-        Text("Genre", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+        Text("Genre",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium
+        )
         Spacer(modifier = Modifier.height(8.dp))
 
         Box {
@@ -271,7 +289,7 @@ private fun FilterSection() {
                     DropdownMenuItem(
                         text = { Text(genre, color = Color.White) },
                         onClick = {
-                            selectedGenre = genre
+                            onGenreChange(genre)
                             expanded = false
                         }
                     )
@@ -282,13 +300,18 @@ private fun FilterSection() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Publisher
-        Text("Publisher", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
+        Text("Publisher",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier
+            .height(8.dp)
+        )
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = marvelChecked,
-                onCheckedChange = { marvelChecked = it },
+                onCheckedChange = onMarvelCheckChange,
                 colors = CheckboxDefaults.colors(
                     checkedColor = Color(0xFFE25B5B),
                     uncheckedColor = Color.Gray,
@@ -299,7 +322,7 @@ private fun FilterSection() {
             Spacer(modifier = Modifier.width(16.dp))
             Checkbox(
                 checked = dcChecked,
-                onCheckedChange = { dcChecked = it },
+                onCheckedChange = onDcCheckChange,
                 colors = CheckboxDefaults.colors(
                     checkedColor = Color(0xFFE25B5B),
                     uncheckedColor = Color.Gray,
@@ -317,12 +340,14 @@ private fun FilterSection() {
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = {}) {
-                Text("Clear", color = Color.White, fontWeight = FontWeight.Bold)
+            TextButton(onClick = onClearFilters) {
+                Text("Clear",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(
-                onClick = { },
+                onClick = onApplyFilters,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE25B5B))
             ) {
