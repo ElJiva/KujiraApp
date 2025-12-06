@@ -75,11 +75,12 @@ import androidx.compose.ui.res.painterResource
 import com.comics.kujiraapp.utils.getDrawableResourceId
 
 
-
 @Composable
-fun ComicsHeader(comics: Comics) {
+fun ComicsHeader(
+    comics: Comics, onBackClick: () -> Unit, isBookmarked: Boolean, onBookmarkClick: () -> Unit
+) {
     val context = LocalContext.current
-    val imageResId = getDrawableResourceId(context, comics.imagen )
+    val imageResId = getDrawableResourceId(context, comics.imagen)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,6 +94,7 @@ fun ComicsHeader(comics: Comics) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Go Back",
@@ -100,14 +102,12 @@ fun ComicsHeader(comics: Comics) {
                 modifier = Modifier
                     .size(45.dp)
                     .padding(8.dp)
-//                    .alpha(0.7f)
-            )
+                    .clickable { onBackClick() })
 
             Text(
                 text = comics.title,
                 color = Color.White,
                 fontSize = 18.sp,
-
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -115,32 +115,26 @@ fun ComicsHeader(comics: Comics) {
                     .padding(horizontal = 8.dp)
             )
 
+
             Icon(
-                imageVector = Icons.Default.BookmarkBorder,
+                imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                 contentDescription = "Bookmark",
                 tint = Color.White,
                 modifier = Modifier
                     .size(45.dp)
                     .padding(8.dp)
-//                    .alpha(0.7f),
-
-            )
+                    .clickable { onBookmarkClick() })
         }
-
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Box(
             modifier = Modifier
-
                 .fillMaxWidth()
                 .height(500.dp)
-//                .aspectRatio(1f)
                 .clip(RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
-
-
             if (imageResId != 0) {
                 Image(
                     painter = painterResource(id = imageResId),
@@ -165,7 +159,8 @@ fun ComicsHeader(comics: Comics) {
 
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .height(450.dp)
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
@@ -203,15 +198,11 @@ fun InfoContainer(
             fontSize = 30.sp
         )
         Text(
-            text = content,
-            color = Color.DarkGray,
-            style = MaterialTheme.typography.bodyMedium
+            text = content, color = Color.DarkGray, style = MaterialTheme.typography.bodyMedium
         )
 
         RatingRow(
-            rating = rating,
-            reviews = reviews,
-            modifier = Modifier.padding(top = 8.dp)
+            rating = rating, reviews = reviews, modifier = Modifier.padding(top = 8.dp)
         )
 
         Column(
@@ -227,8 +218,7 @@ fun InfoContainer(
                     .height(50.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = PrimaryAccent,
-                    contentColor = Color.White
+                    containerColor = PrimaryAccent, contentColor = Color.White
                 )
             ) {
                 Text(
@@ -249,8 +239,7 @@ fun InfoContainer(
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, PrimaryAccent),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = BackgroundCard,
-                    contentColor = PrimaryAccent
+                    containerColor = BackgroundCard, contentColor = PrimaryAccent
                 )
             ) {
                 Text(
@@ -269,9 +258,7 @@ fun InfoContainer(
 
 @Composable
 fun RatingRow(
-    rating: Float,
-    reviews: Int,
-    modifier: Modifier = Modifier
+    rating: Float, reviews: Int, modifier: Modifier = Modifier
 ) {
     val maxStars = 5
     val filledStars = rating.toInt()
@@ -279,8 +266,7 @@ fun RatingRow(
     val emptyStars = maxStars - filledStars - if (hasHalfStar) 1 else 0
 
     Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(filledStars) {
             Icon(
@@ -327,7 +313,6 @@ fun RatingRow(
         )
     }
 }
-
 
 
 @Preview

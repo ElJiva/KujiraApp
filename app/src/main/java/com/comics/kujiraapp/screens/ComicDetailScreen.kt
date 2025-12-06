@@ -16,6 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,15 +34,22 @@ import com.comics.kujiraapp.ui.theme.PrimaryBackground
 import com.comics.kujiraapp.ui.theme.SecondaryText
 import com.comics.kujiraapp.viewmodels.ComicDetailViewModel
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.navigation.NavController
 import com.comics.kujiraapp.ui.theme.BackgroundCard
 
 @Composable
-fun ComicDetailScreen(comicId: String) {
+fun ComicDetailScreen(
+    navController: NavController,
+    comicId: String
+) {
+
     val viewModel: ComicDetailViewModel =
         viewModel(factory = ComicDetailViewModel.Factory(comicId))
     val state by viewModel.state.collectAsState()
 
     val uriHandler = LocalUriHandler.current
+
+    var isBookmarked by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -71,7 +81,13 @@ fun ComicDetailScreen(comicId: String) {
                 ) {
 
                     item {
-                        ComicsHeader(comics = comic)
+
+                        ComicsHeader(
+                            comics = comic,
+                            onBackClick = { navController.popBackStack() },
+                            isBookmarked = isBookmarked,
+                            onBookmarkClick = { isBookmarked = !isBookmarked }
+                        )
                     }
 
                     item {

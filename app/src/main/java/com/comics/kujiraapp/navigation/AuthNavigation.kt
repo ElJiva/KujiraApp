@@ -13,44 +13,47 @@ import com.comics.kujiraapp.screens.ComicDetailScreen
 
 @Composable
 fun AuthNavigation() {
-  val navController = rememberNavController()
+    val navController = rememberNavController()
 
-  NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "login") {
 
-    composable("login") {
-      LoginScreen(
-        onSignUpClicked = { navController.navigate("signup") },
-        onLoginSuccess = {
-          navController.navigate("home") {
-            popUpTo("login") { inclusive = true }
-          }
+        composable("login") {
+            LoginScreen(
+                onSignUpClicked = { navController.navigate("signup") },
+                onLoginSuccess = {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            )
         }
-      )
-    }
 
-    composable("signup") {
-      SignUpScreen(
-        onLoginClicked = { navController.navigate("login") }
-      )
-    }
-
-    composable("home") {
-      HomeScreen(
-        onComicClick = { comicId ->
-          navController.navigate("comicDetail/$comicId")
+        composable("signup") {
+            SignUpScreen(
+                onLoginClicked = { navController.navigate("login") }
+            )
         }
-      )
+
+        composable("home") {
+            HomeScreen(
+                onComicClick = { comicId ->
+                    navController.navigate("comicDetail/$comicId")
+                }
+            )
+        }
+        composable(
+            route = "comicDetail/{comicId}",
+            arguments = listOf(
+                navArgument("comicId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val comicId = backStackEntry.arguments?.getString("comicId") ?: ""
+            ComicDetailScreen(
+                navController = navController,
+                comicId = comicId
+            )
+        }
     }
-      composable(
-          route = "comicDetail/{comicId}",
-          arguments = listOf(
-              navArgument("comicId") { type = NavType.StringType }
-          )
-      ) { backStackEntry ->
-          val comicId = backStackEntry.arguments?.getString("comicId") ?: ""
-          ComicDetailScreen(comicId = comicId)
-      }
-  }
 }
 
 
