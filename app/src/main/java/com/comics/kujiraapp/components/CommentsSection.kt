@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -126,7 +127,7 @@ fun CommentsSection(
         comments.forEach { comment ->
             CommentItem(
                 userName = comment.username,
-                date = comment.createdAt.substring(0, 10),
+                date = comment.createdAt,
                 comment = comment.text
             )
             Spacer(modifier = Modifier.height(8.dp))
